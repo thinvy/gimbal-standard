@@ -39,11 +39,11 @@ Gimbal standared controller of IRobot 2022 ECHG
 
 打开/Config/Setting.h，在文件开头添加一个自拟名称的宏定义作为条件编译的总条件，然后注释掉其他宏定义
 
-![image-20220304143623348](C:\Users\qylann\AppData\Roaming\Typora\typora-user-images\image-20220304143623348.png)
+![image1](/img/1.png)
 
 编写详细的配置信息
 
-![image-20220304143820072](C:\Users\qylann\AppData\Roaming\Typora\typora-user-images\image-20220304143820072.png)
+![image1](/img/2.png)
 
 其他都比较好理解，这里对 “IMU安装方向” 进行说明，该宏定义的含义是云台水平时陀螺仪坐标系xyz与云台姿态坐标系XYZ的对应关系，比如 “IMU_DIRECTION_rxryz_XYZ” 的含义是：云台的X轴的方向和imu水平放置时x轴的反方向相同（rx），云台Y轴方向和imu水平放置时y轴的反方向相同（ry），云台的Z轴的方向和imu水平放置时z轴的方向相同（z），即 “rxryz” 对应 “XYZ”。
 
