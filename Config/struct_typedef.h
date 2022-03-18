@@ -75,8 +75,6 @@ typedef struct{
     fp32    RollSpeed;
 } EulerSystemMeasure_t;
 
-
-
 #endif
 
 

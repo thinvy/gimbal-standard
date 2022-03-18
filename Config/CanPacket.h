@@ -8,13 +8,20 @@
 #define IMU_PACKET_DATA0_ID         0x102
 #define IMU_PACKET_DATA1_ID         0x103
 
-#define AIMBOT_STATE_NORMAL_ID      0x106
-#define AIMBOT_COMMAND_NORMAL_ID    0x108
+#define AIMBOT_STATE_NODE_ID        0x106
+#define AIMBOT_DATA_NODE_ID         0x108
 
 #define GINBAL_REQUEST_STATE_ID     0x110
 
-#define REFEREE_CHASSIS_POWER_SHOOT_HEAT_0_ID 0x120
-#define REFEREE_CHASSIS_POWER_SHOOT_HEAT_1_ID 0x121
+#define REFEREE_POWER_HEAT_NODE_0_ID                0x120
+#define REFEREE_POWER_HEAT_NODE_1_ID                0x121
+#define REFEREE_AMMO_SPEED_NODE_0_ID                0x122
+#define REFEREE_AMMO_SPEED_NODE_1_ID                0x123
+#define REFEREE_AMMO_SPEED_NODE_2_ID                0x124
+#define REFEREE_AMMO_LIMIT_NODE_0_ID                0x125
+#define REFEREE_AMMO_LIMIT_NODE_1_ID                0x126
+#define REFEREE_AMMO_LIMIT_NODE_2_ID                0x127
+#define REFEREE_SELF_STATE_NODE                     0x128
 
 typedef __PACKED_STRUCT{
     uint8_t     AimbotRequest;

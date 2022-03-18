@@ -106,6 +106,7 @@ int main(void)
   MX_TIM4_Init();
   MX_TIM1_Init();
   MX_TIM8_Init();
+  MX_TIM6_Init();
   /* USER CODE BEGIN 2 */
   delay_init();
   remote_control_init();
@@ -113,6 +114,7 @@ int main(void)
   
   HAL_TIM_Base_Start_IT(&htim3);
   HAL_TIM_Base_Start_IT(&htim4);
+  HAL_TIM_Base_Start_IT(&htim6);
   HAL_TIM_PWM_Start(&htim10, TIM_CHANNEL_1);
   
 //  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
@@ -122,6 +124,13 @@ int main(void)
 //  HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1);
 //  HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_2);
 //  HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_3);
+//  __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, 1000);
+//  __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_2, 1000);
+//  __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_3, 1150);
+//  __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_4, 1000);
+//  __HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, 2000);
+//  __HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, 2000);
+//  __HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_3, 2000);
 //  __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, 1800);
 //  __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_2, 1800);
 //  __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_3, 1800);
@@ -145,6 +154,7 @@ int main(void)
 //  __HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, 1150);
 //  __HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, 1150);
 //  __HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_3, 1150);
+
   HAL_GPIO_WritePin(Laser_GPIO_Port, Laser_Pin, GPIO_PIN_SET);
   /* USER CODE END 2 */
 

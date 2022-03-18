@@ -1,10 +1,13 @@
 #include "CalculateThread.h"
 #include "AttitudeThread.h"
+#include "InterruptService.h"
 #include "Remote.h"
 #include "AimbotCan.h"
 #include "user_lib.h"
 #include "pid.h"
 #include "Motor.h"
+
+#include "bsp_can.h"
 
 #include "cmsis_os.h"
 #include <string.h>
@@ -14,10 +17,10 @@
 
 
 
-Gimbal_t        Gimbal;
-RC_ctrl_t       Remote;
-AimbotCommand_t Aimbot;
-
+Gimbal_t            Gimbal;
+RC_ctrl_t           Remote;
+AimbotCommand_t     Aimbot;
+OfflineMonitor_t    Offline;
 
 
 void GimbalStateMachineUpdate(void);
@@ -32,8 +35,6 @@ void GimbalCommandUpdate(void);
 void RotorCommandUpdate(void);
 void AmmoCommandUpdate(void);
 
-
-
 fp32 LimitNormalization(fp32 input);
 
 void CalculateThread(void const * pvParameters)
@@ -46,6 +47,7 @@ void CalculateThread(void const * pvParameters)
     {
         Remote = *get_remote_control_point();
         GetAimbotCommand(&Aimbot);
+        DeviceOfflineMonitorUpdate(&Offline);
         
         GimbalStateMachineUpdate();
         GimbalControlModeUpdate();
@@ -58,7 +60,14 @@ void CalculateThread(void const * pvParameters)
         RotorCommandUpdate();
         AmmoCommandUpdate();
         
-//        GimbalMotorControl(Gimbal.Output.Yaw, Gimbal.Output.Pitch, Gimbal.Output.Rotor, Gimbal.Output.AmmoLeft, Gimbal.Output.AmmoRight);
+        GimbalMotorControl( Gimbal.Output.Yaw * YAW_MOTOR_DIRECTION,
+                            Gimbal.Output.Pitch * PITCH_MOTOR_DIRECTION, 
+                            Gimbal.Output.Rotor, 
+                            Gimbal.Output.AmmoLeft, 
+                            Gimbal.Output.AmmoRight
+                        );
+        
+        
         osDelay(1);
     }
 }

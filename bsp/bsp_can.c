@@ -2,8 +2,7 @@
 #include "main.h"
 
 
-extern CAN_HandleTypeDef hcan1;
-extern CAN_HandleTypeDef hcan2;
+
 static uint32_t             send_mail_box;
 static CAN_TxHeaderTypeDef  can_tx_message;
 

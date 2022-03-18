@@ -4,9 +4,10 @@
 
 //#define HERO1
 //#define INFANTRY3
-//#define INFANTRY4
+#define INFANTRY4
 //#define INFANTRY5
-#define SENTRY7
+//#define SENTRY7
+
 
 
 
@@ -40,6 +41,8 @@
 #define DEFAULT_AMMOL_PID           AMMO_LEFT_SPEED_15MS
 #define DEFAULT_AMMOR_PID           AMMO_RIGHT_SPEED_15MS
 #define DEFAULT_AMMO_SPEEDSET       AMMO_SPEEDSET_15MS
+// 通信can总线位置
+#define COMMUNICATE_CANPORT         hcan1
 #endif
 
 
@@ -74,8 +77,6 @@
 // 通信can总线位置
 #define COMMUNICATE_CANPORT         hcan2
 #endif
-
-
 
 
 

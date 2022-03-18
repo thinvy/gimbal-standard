@@ -1,6 +1,20 @@
 # gimbal-standard
 Gimbal standared controller of IRobot 2022 ECHG
 
+**<u>注意更新本地工程之前备份参数文件</u>**
+
+### 更新日志
+
+2022.3.19
+
+​	1、修改了因CAN发送邮箱溢出导致的IMU数据包发送不完全的BUG，目前IMU数据包发送频率为严格500HZ，云台指令包发送频率为严格100Hz，电机控制指令发送频率在1000Hz左右
+
+​	2、加入了通信离线检测，之后会做离线报警和保护
+
+2022.3.4 
+
+​	Hello World
+
 ### 工程结构
 
 /application 后台程序和中断服务程序，其中Attitude为姿态解算线程，Calculate为云台控制线程，Debug为调试线程，Interrupt为中断服务

@@ -4,6 +4,8 @@
 
 #include "cmsis_os.h"
 
+#include "bsp_can.h"
+
 #include "bsp_imu_pwm.h"
 #include "bsp_spi.h"
 #include "bmi088driver.h"
@@ -16,6 +18,9 @@
 #include "arm_math.h"
 #include "user_lib.h"
 
+#include "InterruptService.h"
+
+#include "CanPacket.h"
 #include "Setting.h"
 
 
@@ -83,6 +88,8 @@ fp32 INS_quat[4] = {0.0f, 0.0f, 0.0f, 0.0f};
 fp32 INS_angle[3] = {0.0f, 0.0f, 0.0f};      //euler angle, unit rad.欧拉角 单位 rad
 fp32 INS_palstance[3] = {0.0f, 0.0f, 0.0f};
 
+uint32_t IMU_Timer;
+
 const fp32 *get_gyro_data_point(void);
 const fp32 *get_INS_angle_point(void);
 void GimbalEulerSystemMeasureUpdate(EulerSystemMeasure_t *IMU);
@@ -129,9 +136,13 @@ void AttitudeThread(void const *pvParameters)
 
     while (1)
     {
-			AHRS_update(INS_quat, 0.001f, bmi088_real_data.gyro, bmi088_real_data.accel);
-			get_angle(INS_quat, INS_angle + INS_YAW_ADDRESS_OFFSET, INS_angle + INS_PITCH_ADDRESS_OFFSET, INS_angle + INS_ROLL_ADDRESS_OFFSET);
-			osDelay(1);//解算频率只需要高于云台任务频率即可
+        AHRS_update(INS_quat, 0.001f, bmi088_real_data.gyro, bmi088_real_data.accel);
+        get_angle(INS_quat, INS_angle + INS_YAW_ADDRESS_OFFSET, INS_angle + INS_PITCH_ADDRESS_OFFSET, INS_angle + INS_ROLL_ADDRESS_OFFSET);
+//        IMU_Timer = GetSystemTimer();
+//        CanSendMessage(&COMMUNICATE_CANPORT, IMU_PACKET_TIME_ID, 4, (uint8_t *)&IMU_Timer);
+//        CanSendMessage(&COMMUNICATE_CANPORT, IMU_PACKET_DATA0_ID, 8, (uint8_t *)&INS_quat[0]);
+//        CanSendMessage(&COMMUNICATE_CANPORT, IMU_PACKET_DATA1_ID, 8, (uint8_t *)&INS_quat[2]);
+        osDelay(1);//解算频率只需要高于云台任务频率即可
     }
 }
 
