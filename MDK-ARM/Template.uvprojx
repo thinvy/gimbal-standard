@@ -698,6 +698,11 @@
               <FileType>1</FileType>
               <FilePath>..\device\AimbotCan.c</FilePath>
             </File>
+            <File>
+              <FileName>RefereeCan.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\device\RefereeCan.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -752,6 +757,11 @@
               <FileName>Sentry7Parameter.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\Config\Sentry7Parameter.h</FilePath>
+            </File>
+            <File>
+              <FileName>Hero1_1Parameter.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Config\Hero1_1Parameter.h</FilePath>
             </File>
           </Files>
         </Group>

@@ -2,10 +2,13 @@
 #define INTERUPT_SERVICE_H
 #include "struct_typedef.h"
 
-#define MOTOR_OFFLINE_TIMEMAX   10
-#define REMOTE_OFFLINE_TIMEMAX  250
+#define DEVICE_OFFLINE          0x01
+#define DEVICE_ONLINE           0x00
+
+#define MOTOR_OFFLINE_TIMEMAX   50
+#define REMOTE_OFFLINE_TIMEMAX  550
 #define AIMBOT_OFFLINE_TIMEMAX  100
-#define REFEREE_OFFLINE_TIMEMAX 200
+#define REFEREE_OFFLINE_TIMEMAX 1000
 
 
 typedef struct

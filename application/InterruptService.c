@@ -2,6 +2,7 @@
 #include "main.h"
 #include "Motor.h"
 #include "Remote.h"
+#include "RefereeCan.h"
 
 #include "AimbotCan.h"
 #include "CalculateThread.h"
@@ -93,46 +94,55 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
         case REFEREE_POWER_HEAT_NODE_0_ID:
         {
             RefereePowerHeatNode0OfflineCounterUpdate();
+            RefereePowerHeatNode0InformationUpdate(rx_data);
             break;
         }
         case REFEREE_POWER_HEAT_NODE_1_ID:
         {
             RefereePowerHeatNode1OfflineCounterUpdate();
+            RefereePowerHeatNode1InformationUpdate(rx_data);
             break;
         }
         case REFEREE_AMMO_SPEED_NODE_0_ID:
         {
             RefereeAmmoSpeedNode0OfflineCounterUpdate();
+            RefereeAmmoSpeedNode0InformationUpdate(rx_data);
             break;
         }
         case REFEREE_AMMO_SPEED_NODE_1_ID:
         {
             RefereeAmmoSpeedNode1OfflineCounterUpdate();
+            RefereeAmmoSpeedNode1InformationUpdate(rx_data);
             break;
         }
         case REFEREE_AMMO_SPEED_NODE_2_ID:
         {
             RefereeAmmoSpeedNode2OfflineCounterUpdate();
+            RefereeAmmoSpeedNode2InformationUpdate(rx_data);
             break;
         }
         case REFEREE_AMMO_LIMIT_NODE_0_ID:
         {
             RefereeAmmoLimitNode0OfflineCounterUpdate();
+            RefereeAmmoLimitNode0InformationUpdate(rx_data);
             break;
         }
         case REFEREE_AMMO_LIMIT_NODE_1_ID:
         {
             RefereeAmmoLimitNode1OfflineCounterUpdate();
+            RefereeAmmoLimitNode1InformationUpdate(rx_data);
             break;
         }
         case REFEREE_AMMO_LIMIT_NODE_2_ID:
         {
             RefereeAmmoLimitNode2OfflineCounterUpdate();
+            RefereeAmmoLimitNode2InformationUpdate(rx_data);
             break;
         }
         case REFEREE_SELF_STATE_NODE:
         {
             RefereeSelfStateNodeOfflineCounterUpdate();
+            RefereeSelfStateNodeInformationUpdate(rx_data);
             break;
         }
         

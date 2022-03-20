@@ -6,6 +6,7 @@
 #include "user_lib.h"
 #include "pid.h"
 #include "Motor.h"
+#include "RefereeCan.h"
 
 #include "bsp_can.h"
 
@@ -17,10 +18,11 @@
 
 
 
-Gimbal_t            Gimbal;
-RC_ctrl_t           Remote;
-AimbotCommand_t     Aimbot;
-OfflineMonitor_t    Offline;
+Gimbal_t                Gimbal;
+RC_ctrl_t               Remote;
+AimbotCommand_t         Aimbot;
+OfflineMonitor_t        Offline;
+RefereeInformation_t    Referee;
 
 
 void GimbalStateMachineUpdate(void);
@@ -47,7 +49,9 @@ void CalculateThread(void const * pvParameters)
     {
         Remote = *get_remote_control_point();
         GetAimbotCommand(&Aimbot);
+        GetRefereeInformation(&Referee);
         DeviceOfflineMonitorUpdate(&Offline);
+        
         
         GimbalStateMachineUpdate();
         GimbalControlModeUpdate();
@@ -81,7 +85,18 @@ uint32_t    gimbal_lagging_counter = 0;         //  云台堵转计数器
 uint32_t    gimbal_reverse_countdown = 0;       //  云台拨盘反转倒计时器
 void GimbalStateMachineUpdate(void)
 {
+    // 电机离线保护
+    if (Offline.PitchMotor == DEVICE_OFFLINE  ||  Offline.YawMotor == DEVICE_OFFLINE){
+        if (Gimbal.StateMachine != GM_NO_FORCE){
+                Gimbal.StateMachine = GM_NO_FORCE;
+            }
+        return;
+    }
+    
+    
+    // 云台状态机
     switch (Remote.rc.s[0]){
+        // 右拨杆打到最上，云台复位后进入比赛模式，该模式下开摩擦轮
         case RC_SW_UP:
             if (Gimbal.StateMachine == GM_NO_FORCE){
                 Gimbal.StateMachine = GM_INIT;
@@ -100,6 +115,8 @@ void GimbalStateMachineUpdate(void)
                 Gimbal.StateMachine = GM_MATCH;
             }
             break;
+        
+        // 右拨杆打到中间，云台复位后进入调试模式
         case RC_SW_MID:
             if (Gimbal.StateMachine == GM_NO_FORCE){
                 Gimbal.StateMachine = GM_INIT;
@@ -118,6 +135,8 @@ void GimbalStateMachineUpdate(void)
                 Gimbal.StateMachine = GM_TEST;
             }
             break;
+            
+        // 右拨杆打到最下，或遥控器数据出错，云台进入无力模式
         case RC_SW_DOWN:
             if (Gimbal.StateMachine != GM_NO_FORCE){
                 Gimbal.StateMachine = GM_NO_FORCE;
@@ -140,7 +159,9 @@ void SetGimbalDisable(void)
 
 void GimbalControlModeUpdate(void)
 {
+    // 比赛模式下
     if(Gimbal.StateMachine == GM_MATCH){
+        // 如果按下鼠标右键并且视觉发现目标，进入自瞄控制
         if ((Remote.mouse.press_r == PRESS)  &&  (Aimbot.State & AIMBOT_TARGET_INSIDE_OFFSET)){
             if (CheakKeyPress(KEY_PRESSED_OFFSET_F) == RELEASE){
                 Gimbal.ControlMode = GM_AIMBOT_OPERATE;
@@ -205,6 +226,7 @@ void GimbalFireModeUpdate(void)
                 Gimbal.FireMode = GM_FIRE_READY;
             }
         }
+        
         //  异常射击模式的状态机，用于反堵转
         else if (Gimbal.FireMode == GM_FIRE_LAGGING){
             if (gimbal_reverse_countdown > 0){
@@ -227,6 +249,7 @@ void GimbalFireModeUpdate(void)
         if (gimbal_lagging_counter > ROTOR_LAGGING_COUNTER_MAX){
             gimbal_lagging_counter = 0;
             gimbal_reverse_countdown = ROTOR_TIMESET_RESERVE;
+            Gimbal.FireMode = GM_FIRE_LAGGING;
         }
         
     }
@@ -648,6 +671,8 @@ void GetGimbalRequestState(GimbalRequestState_t *RequestState)
         RequestState->ChassisStateRequest |= (uint8_t)(1 << 0);
     }
 }
+
+
 
 
 
