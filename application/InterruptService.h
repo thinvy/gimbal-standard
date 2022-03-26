@@ -5,11 +5,6 @@
 #define DEVICE_OFFLINE          0x01
 #define DEVICE_ONLINE           0x00
 
-#define MOTOR_OFFLINE_TIMEMAX   50
-#define REMOTE_OFFLINE_TIMEMAX  550
-#define AIMBOT_OFFLINE_TIMEMAX  100
-#define REFEREE_OFFLINE_TIMEMAX 1000
-
 
 typedef struct
 {

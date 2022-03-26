@@ -155,6 +155,9 @@ int main(void)
 //  __HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, 1150);
 //  __HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_3, 1150);
 
+  HAL_GPIO_WritePin(LED_R_GPIO_Port, LED_R_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(LED_G_GPIO_Port, LED_G_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(LED_B_GPIO_Port, LED_B_Pin, GPIO_PIN_RESET);
   HAL_GPIO_WritePin(Laser_GPIO_Port, Laser_Pin, GPIO_PIN_SET);
   /* USER CODE END 2 */
 

@@ -36,6 +36,7 @@ void GimbalMeasureUpdate(void);
 void GimbalCommandUpdate(void);
 void RotorCommandUpdate(void);
 void AmmoCommandUpdate(void);
+void DebugLEDShow(void);
 
 fp32 LimitNormalization(fp32 input);
 
@@ -71,7 +72,7 @@ void CalculateThread(void const * pvParameters)
                             Gimbal.Output.AmmoRight
                         );
         
-        
+        DebugLEDShow();
         osDelay(1);
     }
 }
@@ -92,6 +93,15 @@ void GimbalStateMachineUpdate(void)
             }
         return;
     }
+    
+    // 遥控器离线保护
+    if (Offline.Remote == DEVICE_OFFLINE){
+        if (Gimbal.StateMachine != GM_NO_FORCE){
+                Gimbal.StateMachine = GM_NO_FORCE;
+            }
+        return;
+    }
+        
     
     
     // 云台状态机
@@ -162,7 +172,9 @@ void GimbalControlModeUpdate(void)
     // 比赛模式下
     if(Gimbal.StateMachine == GM_MATCH){
         // 如果按下鼠标右键并且视觉发现目标，进入自瞄控制
-        if ((Remote.mouse.press_r == PRESS)  &&  (Aimbot.State & AIMBOT_TARGET_INSIDE_OFFSET)){
+        if (((Remote.mouse.press_r == PRESS)  ||  (Remote.rc.s[1] == RC_SW_UP))  
+            &&  (Offline.AimbotStateNode == DEVICE_ONLINE)  &&  (Offline.AimbotDataNode == DEVICE_ONLINE)  
+            &&  (Aimbot.State & AIMBOT_TARGET_INSIDE_OFFSET)){
             if (CheakKeyPress(KEY_PRESSED_OFFSET_F) == RELEASE){
                 Gimbal.ControlMode = GM_AIMBOT_OPERATE;
             }
@@ -175,7 +187,9 @@ void GimbalControlModeUpdate(void)
         }
     }
     else if (Gimbal.StateMachine == GM_TEST){
-        if ((Remote.rc.s[1] == RC_SW_UP)  &&  (Aimbot.State & AIMBOT_TARGET_INSIDE_OFFSET)){
+        if (((Remote.mouse.press_r == PRESS)  ||  (Remote.rc.s[1] == RC_SW_UP))  
+            &&  (Offline.AimbotStateNode == DEVICE_ONLINE)  &&  (Offline.AimbotDataNode == DEVICE_ONLINE)  
+            &&  (Aimbot.State & AIMBOT_TARGET_INSIDE_OFFSET)){
             if (CheakKeyPress(KEY_PRESSED_OFFSET_F) == RELEASE){
                 Gimbal.ControlMode = GM_AIMBOT_OPERATE;
             }
@@ -658,7 +672,7 @@ void GetGimbalRequestState(GimbalRequestState_t *RequestState)
     RequestState->GimbalState = 0x00;
     RequestState->Reserve = 0x00;
     
-    if (((Gimbal.StateMachine == GM_TEST)  ||  (Gimbal.StateMachine == GM_MATCH))  &&  (Remote.rc.s[1] == RC_SW_MID)){
+    if (((Gimbal.StateMachine == GM_TEST)  ||  (Gimbal.StateMachine == GM_MATCH))  &&  (Remote.rc.s[1] == RC_SW_DOWN)){
         RequestState->ChassisStateRequest |= (uint8_t)(1 << 1);
         if (Remote.rc.ch[4] == -660){
             RequestState->ChassisStateRequest |= (uint8_t)(1 << 4);
@@ -674,7 +688,24 @@ void GetGimbalRequestState(GimbalRequestState_t *RequestState)
 
 
 
-
+void DebugLEDShow(void)
+{
+    if ((Offline.AimbotStateNode == DEVICE_ONLINE)  &&  (Offline.AimbotDataNode == DEVICE_ONLINE)){
+        HAL_GPIO_WritePin(LED_B_GPIO_Port, LED_B_Pin, GPIO_PIN_SET);
+        if ((Aimbot.State & AIMBOT_TARGET_INSIDE_OFFSET)){
+            HAL_GPIO_WritePin(LED_R_GPIO_Port, LED_R_Pin, GPIO_PIN_SET);
+        }
+        else{
+            HAL_GPIO_WritePin(LED_R_GPIO_Port, LED_R_Pin, GPIO_PIN_RESET);
+        }
+    }
+    else{
+        HAL_GPIO_WritePin(LED_B_GPIO_Port, LED_B_Pin, GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(LED_R_GPIO_Port, LED_R_Pin, GPIO_PIN_RESET);
+    }
+    
+    
+}
 
 
 fp32 LimitNormalization(fp32 input)

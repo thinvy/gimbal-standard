@@ -1,6 +1,11 @@
 #ifndef SETTING_H
 #define SETTING_H
 
+#define MOTOR_OFFLINE_TIMEMAX   50
+#define REMOTE_OFFLINE_TIMEMAX  550
+#define AIMBOT_OFFLINE_TIMEMAX  550
+#define REFEREE_OFFLINE_TIMEMAX 3000
+
 
 
 //#define HERO1
@@ -53,7 +58,7 @@
 // 参数配置文件
 #define PARAMETER_FILE "Sentry7Parameter.h"
 // imu安装方向
-#define IMU_DIRECTION_rxryz_XYZ
+#define IMU_DIRECTION_yrxz_XYZ
 // 电机ID分配
 #define YAW_MOTOR_ID                0x205
 #define PITCH_MOTOR_ID              0x206
