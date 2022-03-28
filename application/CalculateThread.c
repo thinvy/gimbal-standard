@@ -667,7 +667,7 @@ void GetGimbalRequestState(GimbalRequestState_t *RequestState)
 {
     RequestState->AimbotRequest = 0x00;
     RequestState->ChassisMoveXRequest = LimitNormalization(Remote.rc.ch[1] / 660.0f + (CheakKeyPress(KEY_PRESSED_OFFSET_W) - CheakKeyPress(KEY_PRESSED_OFFSET_S))) * 32767;
-    RequestState->ChassisMoveYRequest = LimitNormalization(Remote.rc.ch[0] / 660.0f + (CheakKeyPress(KEY_PRESSED_OFFSET_W) - CheakKeyPress(KEY_PRESSED_OFFSET_S))) * 32767;
+    RequestState->ChassisMoveYRequest = -LimitNormalization(Remote.rc.ch[0] / 660.0f + (CheakKeyPress(KEY_PRESSED_OFFSET_A) - CheakKeyPress(KEY_PRESSED_OFFSET_D))) * 32767;
     RequestState->ChassisStateRequest = 0x00;
     RequestState->GimbalState = 0x00;
     RequestState->Reserve = 0x00;
