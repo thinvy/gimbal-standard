@@ -1,5 +1,5 @@
-#ifndef __SENTRY7_PARAMETER_H
-#define __SENTRY7_PARAMETER_H
+#ifndef __INFANTRY4_PARAMETER_H
+#define __INFANTRY4_PARAMETER_H
 
 #include "struct_typedef.h"
 
@@ -17,11 +17,11 @@
 #define YAW_MAX_SPEED                           300
 #define YAW_MAX_ISPEED                          30
 
-#define AMMO_SPEEDSET_10MS                      2000
-#define AMMO_SPEEDSET_12MS                      5000
+#define AMMO_SPEEDSET_10MS                      3830
+#define AMMO_SPEEDSET_12MS                      2000
 #define AMMO_SPEEDSET_14MS                      5000
 #define AMMO_SPEEDSET_15MS                      4700
-#define AMMO_SPEEDSET_16MS                      5000
+#define AMMO_SPEEDSET_16MS                      5400
 #define AMMO_SPEEDSET_18MS                      5000
 #define AMMO_SPEEDSET_22MS                      5000
 #define AMMO_SPEEDSET_30MS                      5000
@@ -31,13 +31,11 @@
 
 #define ROTOR_TIMESET_BUSY                      65
 #define ROTOR_TIMESET_COOLING                   150
+//#define ROTOR_TIMESET_COOLING                   10
 #define ROTOR_TIMESET_RESERVE                   160
 #define ROTOR_LAGGING_COUNTER_MAX               70
 
 
-
-#define YAW_REMOTE_SENS                         0.25f
-#define PITCH_REMOTE_SENS                       0.25f
 
 
 
@@ -67,7 +65,7 @@ fp32 PITCH_ANGLE_NO_FORCE[3] = {PITCH_ANGLE_NO_FORCE_KP, PITCH_ANGLE_NO_FORCE_KI
 
 //  归位云台参数
 //  YAW轴角速度环
-#define YAW_SPEED_RESET_POSITION_KP             36.0f
+#define YAW_SPEED_RESET_POSITION_KP             120.0f
 #define YAW_SPEED_RESET_POSITION_KI             0.0f
 #define YAW_SPEED_RESET_POSITION_KD             0.0f
 fp32 YAW_SPEED_RESET_POSITION[3] = {YAW_SPEED_RESET_POSITION_KP, YAW_SPEED_RESET_POSITION_KI, YAW_SPEED_RESET_POSITION_KD};
@@ -90,7 +88,7 @@ fp32 PITCH_ANGLE_RESET_POSITION[3] = {PITCH_ANGLE_RESET_POSITION_KP, PITCH_ANGLE
 
 //  手动控制云台参数
 //  YAW轴角速度环
-#define YAW_SPEED_MANUAL_OPERATE_KP             180.0f
+#define YAW_SPEED_MANUAL_OPERATE_KP             320.0f
 #define YAW_SPEED_MANUAL_OPERATE_KI             0.0f
 #define YAW_SPEED_MANUAL_OPERATE_KD             0.0f
 fp32 YAW_SPEED_MANUAL_OPERATE[3] = {YAW_SPEED_MANUAL_OPERATE_KP, YAW_SPEED_MANUAL_OPERATE_KI, YAW_SPEED_MANUAL_OPERATE_KD};
@@ -261,5 +259,26 @@ fp32 ROTOR_STOP[3] = {ROTOR_STOP_KP, ROTOR_STOP_KI, ROTOR_STOP_KD};
 #define ROTOR_BACK_KI                           0.0f
 #define ROTOR_BACK_KD                           0.0f
 fp32 ROTOR_BACK[3] = {ROTOR_BACK_KP, ROTOR_BACK_KI, ROTOR_BACK_KD};
+
+// 辅助发射机构拨盘
+#define ROTOR_AUX_UNABLE_KP                     0.0f
+#define ROTOR_AUX_UNABLE_KI                     0.0f
+#define ROTOR_AUX_UNABLE_KD                     0.0f
+fp32 ROTOR_AUX_UNABLE[3] = {ROTOR_UNABLE_KP, ROTOR_UNABLE_KI, ROTOR_UNABLE_KD};
+
+#define ROTOR_AUX_FORWARD_KP                    120.0f
+#define ROTOR_AUX_FORWARD_KI                    0.0f
+#define ROTOR_AUX_FORWARD_KD                    0.0f
+fp32 ROTOR_AUX_FORWARD[3] = {ROTOR_FORWARD_KP, ROTOR_FORWARD_KI, ROTOR_FORWARD_KD};
+
+#define ROTOR_AUX_STOP_KP                       30.0f
+#define ROTOR_AUX_STOP_KI                       0.0f
+#define ROTOR_AUX_STOP_KD                       0.0f
+fp32 ROTOR_AUX_STOP[3] = {ROTOR_STOP_KP, ROTOR_STOP_KI, ROTOR_STOP_KD};
+
+#define ROTOR_AUX_BACK_KP                       60.0f
+#define ROTOR_AUX_BACK_KI                       0.0f
+#define ROTOR_AUX_BACK_KD                       0.0f
+fp32 ROTOR_AUX_BACK[3] = {ROTOR_BACK_KP, ROTOR_BACK_KI, ROTOR_BACK_KD};
 
 #endif

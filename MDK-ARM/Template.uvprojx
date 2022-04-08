@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F407xx,USE_HAL_DRIVER,STM32F407xx,ARM_MATH_CM4,ARM_MATH_ROUNDING,ARM_MATH_MATRIX_CHECK</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;    ../Drivers/STM32F4xx_HAL_Driver/Inc;    ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;    ../Middlewares/Third_Party/FreeRTOS/Source/include;    ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;    ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;    ../Drivers/CMSIS/Device/ST/STM32F4xx/Include;    ../Drivers/CMSIS/Include;    ..\algorithm\DSP;    ..\algorithm\LIB;    ..\algorithm\Mahony;    ..\algorithm\PID;    ..\application;    ..\bsp;    ..\device;    ..\Config</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;..\algorithm\DSP;..\algorithm\LIB;..\algorithm\Mahony;..\algorithm\Memory;..\algorithm\PID;..\application;..\bsp;..\device;..\Config</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -633,6 +633,11 @@
               <FileType>1</FileType>
               <FilePath>..\algorithm\PID\pid.c</FilePath>
             </File>
+            <File>
+              <FileName>loop_fifo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\algorithm\Memory\loop_fifo.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -762,6 +767,31 @@
               <FileName>Hero1_1Parameter.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\Config\Hero1_1Parameter.h</FilePath>
+            </File>
+            <File>
+              <FileName>Hero1_0Parameter.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Config\Hero1_0Parameter.h</FilePath>
+            </File>
+            <File>
+              <FileName>Infantry4KeyMap.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Config\Infantry4KeyMap.h</FilePath>
+            </File>
+            <File>
+              <FileName>Hero1_0KeyMap.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Config\Hero1_0KeyMap.h</FilePath>
+            </File>
+            <File>
+              <FileName>Hero1_1KeyMap.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Config\Hero1_1KeyMap.h</FilePath>
+            </File>
+            <File>
+              <FileName>Sentry7KeyMap.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Config\Sentry7KeyMap.h</FilePath>
             </File>
           </Files>
         </Group>

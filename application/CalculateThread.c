@@ -10,15 +10,19 @@
 
 #include "bsp_can.h"
 
+#include "loop_fifo.h"
+
 #include "cmsis_os.h"
 #include <string.h>
 
 #include "Setting.h"
 #include PARAMETER_FILE
+#include KEYMAP_FILE
 
 
 
 Gimbal_t                Gimbal;
+Chassis_t               Chassis;
 RC_ctrl_t               Remote;
 AimbotCommand_t         Aimbot;
 OfflineMonitor_t        Offline;
@@ -26,6 +30,7 @@ RefereeInformation_t    Referee;
 
 
 void GimbalStateMachineUpdate(void);
+void ChassisStateMachineUpdate(void);
 void GimbalControlModeUpdate(void);
 void GimbalFireModeUpdate(void);
 void SetGimbalDisable(void);
@@ -34,6 +39,7 @@ void RotorPIDUpdate(void);
 void AmmoPIDUpdate(void);
 void GimbalMeasureUpdate(void);
 void GimbalCommandUpdate(void);
+void ChassisCommandUpdate(void);
 void RotorCommandUpdate(void);
 void AmmoCommandUpdate(void);
 void DebugLEDShow(void);
@@ -45,6 +51,8 @@ void CalculateThread(void const * pvParameters)
     osDelay(500);
     PID_init(&Gimbal.Pid.AmmoLeft, PID_POSITION, AMMO_LEFT_SPEED_10MS, M3508_MAX_OUTPUT, M3508_MAX_IOUTPUT);
     PID_init(&Gimbal.Pid.AmmoRight, PID_POSITION, AMMO_RIGHT_SPEED_10MS, M3508_MAX_OUTPUT, M3508_MAX_IOUTPUT);
+    LoopFifoFp32_init(&Gimbal.ImuBuffer.YawLoopPointer, Gimbal.ImuBuffer.YawAddress, 64);
+    LoopFifoFp32_init(&Gimbal.ImuBuffer.PitchLoopPointer, Gimbal.ImuBuffer.PitchAddress, 64);
 
     while(1)
     {
@@ -52,9 +60,11 @@ void CalculateThread(void const * pvParameters)
         GetAimbotCommand(&Aimbot);
         GetRefereeInformation(&Referee);
         DeviceOfflineMonitorUpdate(&Offline);
-        
+        LoopFifoFp32_push(&Gimbal.ImuBuffer.YawLoopPointer, Gimbal.Imu.YawAngle);
+        LoopFifoFp32_push(&Gimbal.ImuBuffer.PitchLoopPointer, Gimbal.Imu.PitchAngle);
         
         GimbalStateMachineUpdate();
+        ChassisStateMachineUpdate();
         GimbalControlModeUpdate();
         GimbalFireModeUpdate();
         GimbalPIDUpdate();
@@ -62,6 +72,7 @@ void CalculateThread(void const * pvParameters)
         AmmoPIDUpdate();
         GimbalMeasureUpdate();
         GimbalCommandUpdate();
+        ChassisCommandUpdate();
         RotorCommandUpdate();
         AmmoCommandUpdate();
         
@@ -160,6 +171,35 @@ void GimbalStateMachineUpdate(void)
     }
 }
 
+void ChassisStateMachineUpdate(void)
+{
+    if ((Gimbal.StateMachine == GM_NO_FORCE)  ||  (Gimbal.StateMachine == GM_INIT)) {
+        Chassis.ChassisState = CHASSIS_NO_FORCE;
+    }
+    else {
+        if (CHASSIS_ENABLE_KEYMAP) {
+            if (CHASSIS_ROTATE_SWITCH_KEYMAP) {
+                Chassis.ChassisState = CHASSIS_ROTATE;
+            }
+            else if (CHASSIS_STOP_KEYMAP) {
+                Chassis.ChassisState = CHASSIS_NO_MOVE;
+            }
+            else {
+                Chassis.ChassisState = CHASSIS_FOLLOW;
+            }
+            
+            if (CHASSIS_HIGH_SPEED_KEYMAP) {
+                Chassis.ChassisSpeed = CHASSIS_FAST_SPEED;
+            }
+            else {
+                Chassis.ChassisSpeed = CHASSIS_NORMAL_SPEED;
+            }
+        }
+        else {
+            Chassis.ChassisState = CHASSIS_NO_FORCE;
+        }
+    }
+}
 void SetGimbalDisable(void)
 {
     Gimbal.StateMachine = GM_NO_FORCE;
@@ -479,16 +519,18 @@ void GimbalMeasureUpdate(void)
 void GimbalCommandUpdate(void)
 {
     if (Gimbal.ControlMode == GM_MANUAL_OPERATE){
-        Gimbal.Command.Yaw -= Remote.rc.ch[2] / 660.0f * YAW_REMOTE_SENS + Remote.mouse.x / 32768.0f * YAW_MOUSE_SENS;
-        Gimbal.Command.Pitch -= Remote.rc.ch[3] / 660.0f * PITCH_REMOTE_SENS + Remote.mouse.y / 32768.0f * PITCH_MOUSE_SENS;
+        Gimbal.Command.Yaw += GIMBAL_CMD_YAW_KEYMAP;
+        Gimbal.Command.Pitch += GIMBAL_CMD_PITCH_KEYMAP;
         Gimbal.Command.Yaw = loop_fp32_constrain(Gimbal.Command.Yaw, Gimbal.Imu.YawAngle - 180.0f, Gimbal.Imu.YawAngle + 180.0f);
         Gimbal.Command.Pitch = fp32_constrain(Gimbal.Command.Pitch, PITCH_MIN_ANGLE, PITCH_MAX_ANGLE);
         Gimbal.Output.Yaw = cascade_PID_calc(&Gimbal.Pid.Yaw, Gimbal.Imu.YawAngle, Gimbal.Imu.YawSpeed, Gimbal.Command.Yaw);
         Gimbal.Output.Pitch = cascade_PID_calc(&Gimbal.Pid.Pitch, Gimbal.Imu.PitchAngle, Gimbal.Imu.PitchSpeed, Gimbal.Command.Pitch);
     }
     else if (Gimbal.ControlMode == GM_AIMBOT_OPERATE){
-        Gimbal.Command.Yaw = Gimbal.Imu.YawAngle + Aimbot.YawRelativeAngle;
-        Gimbal.Command.Pitch = Gimbal.Imu.PitchAngle + Aimbot.PitchRelativeAngle;
+//        Gimbal.Command.Yaw = Gimbal.Imu.YawAngle + Aimbot.YawRelativeAngle;
+//        Gimbal.Command.Pitch = Gimbal.Imu.PitchAngle + Aimbot.PitchRelativeAngle;
+        Gimbal.Command.Yaw = LoopFifoFp32_read(&Gimbal.ImuBuffer.YawLoopPointer, (GetSystemTimer() - Aimbot.CommandTimer)) + Aimbot.YawRelativeAngle;
+        Gimbal.Command.Pitch = LoopFifoFp32_read(&Gimbal.ImuBuffer.PitchLoopPointer, (GetSystemTimer() - Aimbot.CommandTimer)) + Aimbot.PitchRelativeAngle;
         Gimbal.Command.Yaw = loop_fp32_constrain(Gimbal.Command.Yaw, Gimbal.Imu.YawAngle - 180.0f, Gimbal.Imu.YawAngle + 180.0f);
         Gimbal.Command.Pitch = fp32_constrain(Gimbal.Command.Pitch, PITCH_MIN_ANGLE, PITCH_MAX_ANGLE);
         Gimbal.Output.Yaw = cascade_PID_calc(&Gimbal.Pid.Yaw, Gimbal.Imu.YawAngle, Gimbal.Imu.YawSpeed, Gimbal.Command.Yaw);
@@ -517,8 +559,17 @@ void GimbalCommandUpdate(void)
     }
 }
 
-
-
+void ChassisCommandUpdate(void)
+{
+    if ((Chassis.ChassisState == CHASSIS_NO_FORCE)  ||  (Chassis.ChassisState == CHASSIS_NO_MOVE)) {
+        Chassis.ChassisCommandX = 0.0f;
+        Chassis.ChassisCommandY = 0.0f;
+    }
+    else {
+        Chassis.ChassisCommandX = CHASSIS_CMD_X_KEYMAP;
+        Chassis.ChassisCommandY = CHASSIS_CMD_Y_KEYMAP;
+    }
+}
 
 void RotorCommandUpdate(void)
 {
@@ -662,28 +713,43 @@ void GetGimbalMotorOutput(GimbalOutput_t *out)
 {
     memcpy(out, &Gimbal.Output, sizeof(GimbalOutput_t));
 }
-
 void GetGimbalRequestState(GimbalRequestState_t *RequestState)
 {
     RequestState->AimbotRequest = 0x00;
-    RequestState->ChassisMoveXRequest = LimitNormalization(Remote.rc.ch[1] / 660.0f + (CheakKeyPress(KEY_PRESSED_OFFSET_W) - CheakKeyPress(KEY_PRESSED_OFFSET_S))) * 32767;
-    RequestState->ChassisMoveYRequest = -LimitNormalization(Remote.rc.ch[0] / 660.0f + (CheakKeyPress(KEY_PRESSED_OFFSET_A) - CheakKeyPress(KEY_PRESSED_OFFSET_D))) * 32767;
+    RequestState->ChassisMoveXRequest = Chassis.ChassisCommandX * 32767;
+    RequestState->ChassisMoveYRequest = Chassis.ChassisCommandY * 32767;
     RequestState->ChassisStateRequest = 0x00;
+    
+    if (Chassis.ChassisState != CHASSIS_NO_FORCE) {
+        RequestState->ChassisStateRequest |= (uint8_t)(1 << 1);
+        
+        if (Chassis.ChassisState == CHASSIS_NO_MOVE) {
+            RequestState->ChassisStateRequest |= (uint8_t)(1 << 2);
+        }
+        else if (Chassis.ChassisState == CHASSIS_FOLLOW) {
+            RequestState->ChassisStateRequest |= (uint8_t)(1 << 3);
+        }
+        else if (Chassis.ChassisState == CHASSIS_ROTATE) {
+            RequestState->ChassisStateRequest |= (uint8_t)(1 << 4);
+        }
+        
+//        if (Chassis.ChassisSpeed == CHASSIS_NORMAL_SPEED) {
+//            RequestState->ChassisStateRequest |= (uint8_t)(1 << 5);
+//        }
+//        else if (Chassis.ChassisSpeed == CHASSIS_FAST_SPEED) {
+//            RequestState->ChassisStateRequest |= (uint8_t)(1 << 6);
+//        }
+//        else if (Chassis.ChassisSpeed == CHASSIS_LOW_SPEED) {
+//            RequestState->ChassisStateRequest |= (uint8_t)(1 << 7);
+//        }
+    }
+    else {
+        RequestState->ChassisStateRequest |= (uint8_t)(1 << 0);
+    }
+    
     RequestState->GimbalState = 0x00;
     RequestState->Reserve = 0x00;
     
-    if (((Gimbal.StateMachine == GM_TEST)  ||  (Gimbal.StateMachine == GM_MATCH))  &&  (Remote.rc.s[1] == RC_SW_DOWN)){
-        RequestState->ChassisStateRequest |= (uint8_t)(1 << 1);
-        if (Remote.rc.ch[4] == -660){
-            RequestState->ChassisStateRequest |= (uint8_t)(1 << 4);
-        }
-        else{
-            RequestState->ChassisStateRequest |= (uint8_t)(1 << 3);
-        }
-    }
-    else{
-        RequestState->ChassisStateRequest |= (uint8_t)(1 << 0);
-    }
 }
 
 

@@ -168,8 +168,8 @@ void sbus_to_rc(uint8_t DmaBufNmb)
     rc_ctrl.rc.ch[3] = ((sbus_rx_buf[DmaBufNmb][4] >> 1) | (sbus_rx_buf[DmaBufNmb][5] << 7)) & 0x07ff;  //!< Channel 3
     rc_ctrl.rc.s[0] = ((sbus_rx_buf[DmaBufNmb][5] >> 4) & 0x0003);                                      //!< Switch left
     rc_ctrl.rc.s[1] = ((sbus_rx_buf[DmaBufNmb][5] >> 4) & 0x000C) >> 2;                                 //!< Switch right
-    rc_ctrl.mouse.x = sbus_rx_buf[DmaBufNmb][6] | (sbus_rx_buf[DmaBufNmb][7] << 8);                     //!< Mouse X axis
-    rc_ctrl.mouse.y = sbus_rx_buf[DmaBufNmb][8] | (sbus_rx_buf[DmaBufNmb][9] << 8);                     //!< Mouse Y axis
+    rc_ctrl.mouse.y = -(sbus_rx_buf[DmaBufNmb][6] | (sbus_rx_buf[DmaBufNmb][7] << 8));                     //!< Mouse X axis
+    rc_ctrl.mouse.x = -(sbus_rx_buf[DmaBufNmb][8] | (sbus_rx_buf[DmaBufNmb][9] << 8));                     //!< Mouse Y axis
     rc_ctrl.mouse.z = sbus_rx_buf[DmaBufNmb][10] | (sbus_rx_buf[DmaBufNmb][11] << 8);                   //!< Mouse Z axis
     rc_ctrl.mouse.press_l = sbus_rx_buf[DmaBufNmb][12];                                                 //!< Mouse Left Is Press ?
     rc_ctrl.mouse.press_r = sbus_rx_buf[DmaBufNmb][13];                                                 //!< Mouse Right Is Press ?
@@ -228,4 +228,81 @@ bool_t CheakKeyPressOnce(uint16_t Key)
 }
 
 
+// ¹éÒ»»¯Ò¡¸ËÖµ
+fp32 RemoteChannalRightX()
+{
+    return (rc_ctrl.rc.ch[1] / 660.0f);
+}
+fp32 RemoteChannalRightY()
+{
+    return (-rc_ctrl.rc.ch[0] / 660.0f);
+}
+fp32 RemoteChannalLeftX()
+{
+    return (rc_ctrl.rc.ch[3] / 660.0f);
+}
+fp32 RemoteChannalLeftY()
+{
+    return (-rc_ctrl.rc.ch[2] / 660.0f);
+}
+fp32 RemoteDial()
+{
+    return (rc_ctrl.rc.ch[4] / 660.0f);
+}
+
+// ¹éÒ»»¯Êó±êÒÆ¶¯
+fp32 MouseMoveX()
+{
+    return (rc_ctrl.mouse.x / 32768.0f);
+}
+fp32 MouseMoveY()
+{
+    return (rc_ctrl.mouse.y / 32768.0f);
+}
+
+// Êó±ê×óÓÒ¼ü
+bool_t MousePressLeft()
+{
+    return rc_ctrl.mouse.press_l;
+}
+bool_t MousePressRight()
+{
+    return rc_ctrl.mouse.press_r;
+}
+
+// ²¦¸ËÎ»ÖÃ¼ì²â
+bool_t SwitchRightUpSide()
+{
+    return (rc_ctrl.rc.s[0] == RC_SW_UP);
+}
+bool_t SwitchRightMidSide()
+{
+    return (rc_ctrl.rc.s[0] == RC_SW_MID);
+}
+bool_t SwitchRightDownSide()
+{
+    return (rc_ctrl.rc.s[0] == RC_SW_DOWN);
+}
+bool_t SwitchLeftUpSide()
+{
+    return (rc_ctrl.rc.s[1] == RC_SW_UP);
+}
+bool_t SwitchLeftMidSide()
+{
+    return (rc_ctrl.rc.s[1] == RC_SW_MID);
+}
+bool_t SwitchLeftDownSide()
+{
+    return (rc_ctrl.rc.s[1] == RC_SW_DOWN);
+}
+
+fp32 NormalizedLimit(fp32 input) {
+    if (input > 1.0f) {
+        input = 1.0f;
+    }
+    else if (input < -1.0f) {
+        input = -1.0f;
+    }
+    return input;
+}
 

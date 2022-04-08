@@ -86,6 +86,36 @@ extern uint8_t RC_data_is_error(void);
 extern void slove_RC_lost(void);
 extern void slove_data_error(void);
 extern void sbus_to_rc(uint8_t DmaBufNmb);
+
+//长按触发区域的键值检测
 extern bool_t CheakKeyPress(uint16_t Key);
+//边沿触发检测
 extern bool_t CheakKeyPressOnce(uint16_t Key);
+
+// 归一化摇杆值
+extern fp32 RemoteChannalRightX();
+extern fp32 RemoteChannalRightY();
+extern fp32 RemoteChannalLeftX();
+extern fp32 RemoteChannalLeftY();
+extern fp32 RemoteDial();
+
+// 归一化鼠标移动
+extern fp32 MouseMoveX();
+extern fp32 MouseMoveY();
+
+// 鼠标左右键
+extern bool_t MousePressLeft();
+extern bool_t MousePressRight();
+
+// 拨杆位置检测
+extern bool_t SwitchRightUpSide();
+extern bool_t SwitchRightMidSide();
+extern bool_t SwitchRightDownSide();
+extern bool_t SwitchLeftUpSide();
+extern bool_t SwitchLeftMidSide();
+extern bool_t SwitchLeftDownSide();
+
+
+extern fp32 NormalizedLimit(fp32 input);
+
 #endif

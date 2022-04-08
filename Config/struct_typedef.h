@@ -75,6 +75,12 @@ typedef struct{
     fp32    RollSpeed;
 } EulerSystemMeasure_t;
 
+typedef struct{
+    fp32 *ptr;
+    uint32_t offset;
+    uint32_t size;
+} LoopFifoFp32_t;
+
 #endif
 
 

@@ -50,6 +50,10 @@ void GimbalMotorControl(int16_t YawMotor, int16_t PitchMotor, int16_t RotorMotor
     MotorSendBuffer[(AMMO_LEFT_MOTOR_ID - 0x201)*2 + 1]     =   AmmoLeftMotor;
     MotorSendBuffer[(AMMO_RIGHT_MOTOR_ID - 0x201)*2]        =   AmmoRightMotor >> 8;
     MotorSendBuffer[(AMMO_RIGHT_MOTOR_ID - 0x201)*2 + 1]    =   AmmoRightMotor;
+#ifdef PITCH_AUX
+    MotorSendBuffer[(PITCH_AUX_MOTOR_ID - 0x201)*2]         =   (-PitchMotor) >> 8;
+    MotorSendBuffer[(PITCH_AUX_MOTOR_ID - 0x201)*2 + 1]     =   (-PitchMotor);
+#endif
     
     can_tx_message.IDE = CAN_ID_STD;
     can_tx_message.RTR = CAN_RTR_DATA;

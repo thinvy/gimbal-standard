@@ -295,6 +295,22 @@ void GimbalEulerSystemMeasureUpdate(EulerSystemMeasure_t *IMU)
     IMU->YawSpeed = INS_palstance[0];
 }
 #endif
+#ifdef IMU_DIRECTION_xzry_XYZ
+void AHRS_update(fp32 quat[4], fp32 time, fp32 gyro[3], fp32 accel[3])
+{
+    MahonyAHRSupdate(quat, gyro[0], gyro[2], -gyro[1], accel[0], accel[2], -accel[1], 0, 0, 0);
+}
+void GimbalEulerSystemMeasureUpdate(EulerSystemMeasure_t *IMU)
+{
+    IMU->RollAngle = INS_angle[2] / PI * 180.0f;
+    IMU->PitchAngle = INS_angle[1] / PI * 180.0f;
+    IMU->YawAngle = INS_angle[0] / PI * 180.0f;
+    IMU->RollSpeed = INS_palstance[0];
+    IMU->PitchSpeed = INS_palstance[2];
+    IMU->YawSpeed = -INS_palstance[1];
+}
+#endif
+
 
 
 

@@ -29,17 +29,15 @@
 #define ROTOR_SPEEDSET_FORWARD                  3000.0f
 #define ROTOR_SPEEDSET_BACKWARD                 1000.0f
 
-#define ROTOR_TIMESET_BUSY                      70
-#define ROTOR_TIMESET_COOLING                   150
-#define ROTOR_TIMESET_RESERVE                   300
-#define ROTOR_LAGGING_COUNTER_MAX               15
+#define ROTOR_TIMESET_BUSY                      74
+#define ROTOR_TIMESET_COOLING                   500
+#define ROTOR_TIMESET_RESERVE                   0
+#define ROTOR_LAGGING_COUNTER_MAX               140
 
 
 
 #define YAW_REMOTE_SENS                         0.25f
 #define PITCH_REMOTE_SENS                       0.25f
-#define YAW_MOUSE_SENS                          0.25f
-#define PITCH_MOUSE_SENS                        0.25f
 
 
 
@@ -69,7 +67,7 @@ fp32 PITCH_ANGLE_NO_FORCE[3] = {PITCH_ANGLE_NO_FORCE_KP, PITCH_ANGLE_NO_FORCE_KI
 
 //  归位云台参数
 //  YAW轴角速度环
-#define YAW_SPEED_RESET_POSITION_KP             36.0f
+#define YAW_SPEED_RESET_POSITION_KP             30.0f
 #define YAW_SPEED_RESET_POSITION_KI             0.0f
 #define YAW_SPEED_RESET_POSITION_KD             0.0f
 fp32 YAW_SPEED_RESET_POSITION[3] = {YAW_SPEED_RESET_POSITION_KP, YAW_SPEED_RESET_POSITION_KI, YAW_SPEED_RESET_POSITION_KD};
@@ -254,7 +252,7 @@ fp32 ROTOR_UNABLE[3] = {ROTOR_UNABLE_KP, ROTOR_UNABLE_KI, ROTOR_UNABLE_KD};
 #define ROTOR_FORWARD_KD                        0.0f
 fp32 ROTOR_FORWARD[3] = {ROTOR_FORWARD_KP, ROTOR_FORWARD_KI, ROTOR_FORWARD_KD};
 
-#define ROTOR_STOP_KP                           30.0f
+#define ROTOR_STOP_KP                           5.0f
 #define ROTOR_STOP_KI                           0.0f
 #define ROTOR_STOP_KD                           0.0f
 fp32 ROTOR_STOP[3] = {ROTOR_STOP_KP, ROTOR_STOP_KI, ROTOR_STOP_KD};

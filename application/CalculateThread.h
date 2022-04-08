@@ -65,6 +65,12 @@ typedef struct{
     uint16_t    CurrentHeat;
 } RefereeMeasure_t;
 
+typedef struct{
+    fp32                    YawAddress[64];
+    fp32                    PitchAddress[64];
+    LoopFifoFp32_t          YawLoopPointer;
+    LoopFifoFp32_t          PitchLoopPointer;
+} ImuBuffer_t;
 
 typedef struct{
     EulerSystemMeasure_t    Imu;                    //  imu的数据反馈
@@ -76,9 +82,29 @@ typedef struct{
     GimbalControlMode_e     ControlMode;            //  云台控制模式
     GimbalFireMode_e        FireMode;               //  云台开火模式
     RefereeMeasure_t        Referee;                //  裁判系统数据
+    ImuBuffer_t             ImuBuffer;
 } Gimbal_t;
 
 
+typedef enum{
+    CHASSIS_NO_FORCE    =   0x00,
+    CHASSIS_NO_MOVE             ,
+    CHASSIS_FOLLOW              ,
+    CHASSIS_ROTATE              ,
+} ChassisState_e;
+
+typedef enum{
+    CHASSIS_NORMAL_SPEED=   0x00,
+    CHASSIS_LOW_SPEED           ,
+    CHASSIS_FAST_SPEED          ,
+} ChassisSpeed_e;
+
+typedef struct{
+    ChassisState_e          ChassisState;
+    ChassisSpeed_e          ChassisSpeed;
+    fp32                    ChassisCommandX;
+    fp32                    ChassisCommandY;
+} Chassis_t;
 
 
 extern void CalculateThread(void const * pvParameters);

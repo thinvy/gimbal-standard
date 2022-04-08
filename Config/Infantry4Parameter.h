@@ -36,10 +36,7 @@
 
 
 
-#define YAW_REMOTE_SENS                         0.25f
-#define PITCH_REMOTE_SENS                       0.25f
-#define YAW_MOUSE_SENS                          0.25f
-#define PITCH_MOUSE_SENS                        0.25f
+
 
 
 
