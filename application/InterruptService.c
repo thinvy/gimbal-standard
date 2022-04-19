@@ -58,6 +58,9 @@ void RefereeAmmoLimitNode2OfflineCounterUpdate(void);
 void RefereeSelfStateNodeOfflineCounterUpdate(void);
 void RemoteOfflineCounterUpdate(void);
 
+
+uint32_t RefereeInterpolationTimer = 0;
+
 /**
   * @brief          hal CAN fifo call back, receive motor data
   * @param[in]      hcan, the point to CAN handle
@@ -101,6 +104,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
         {
             RefereePowerHeatNode1OfflineCounterUpdate();
             RefereePowerHeatNode1InformationUpdate(rx_data);
+            RefereeInterpolationTimer = 0;
             break;
         }
         case REFEREE_AMMO_SPEED_NODE_0_ID:
@@ -292,6 +296,12 @@ void TimerTaskLoop1000Hz(void)
 //    GimbalMotorCommandSend();
     CommuniteOfflineCounterUpdate();
     CommuniteOfflineStateUpdate();
+    
+    RefereeInterpolationTimer++;
+    if ((RefereeInterpolationTimer % 10) == 0) {
+        RefereeHeatInterpolation();
+    }
+    
 }
 
 

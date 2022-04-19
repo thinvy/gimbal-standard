@@ -34,10 +34,8 @@
 #define ROTOR_TIMESET_RESERVE                   160
 #define ROTOR_LAGGING_COUNTER_MAX               70
 
+#define ROTOR_TIMESET_COOLING_MAXEXTRA          200
 
-
-#define YAW_REMOTE_SENS                         0.25f
-#define PITCH_REMOTE_SENS                       0.25f
 
 
 

@@ -62,7 +62,7 @@ typedef struct{
     fp32        CurrentSpeed;
     uint16_t    MaxHeat;
     uint16_t    CoolingHeat;
-    uint16_t    CurrentHeat;
+    int16_t     CurrentHeat;
 } RefereeMeasure_t;
 
 typedef struct{
@@ -112,6 +112,7 @@ extern void CalculateThread(void const * pvParameters);
 extern void GetGimbalMotorOutput(GimbalOutput_t *out);
 extern void GetGimbalRequestState(GimbalRequestState_t *RequestState);
 
+extern void RefereeHeatInterpolation(void);
 
 #endif
 

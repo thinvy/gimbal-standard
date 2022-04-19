@@ -33,15 +33,15 @@ fp32 LoopFifoFp32_read(LoopFifoFp32_t *fifo, uint32_t delta)
         delta = 0;
     }
     
-    if (delta > fifo->size) {
-        delta = fifo->size;
+    if (delta >= fifo->size) {
+        delta = fifo->size - 1;
     }
     
     if (fifo->offset >= delta) {
-        return fifo->ptr[fifo->offset - delta];
+        return *(fifo->ptr  - delta);
     }
     else {
-        return fifo->ptr[(fifo->size - 1) - (delta - fifo->offset)];
+        return *(fifo->ptr + fifo->size - delta);
     }
 }
 
